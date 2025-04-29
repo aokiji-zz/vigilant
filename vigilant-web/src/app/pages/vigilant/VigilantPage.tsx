@@ -5,14 +5,12 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useLazyFindUniqueQuery as useLazyFindUniqueHostsQuery } from '../../services/host.service'
 import './VigilantPage.css'
 import { isIpOrDomain } from '../../common/is-domain-or-ips'
-import { useScanMutation } from '../../services/scan-queue.service'
 
-import logo from './nvigilant_logo_cropped.png'
+import logo from '../assets/nvigilant_logo_cropped.png'
 const VigilantPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [fetchHost, { data: hostData, error: hostError, isLoading: hostIsLoading }] = useLazyFindUniqueHostsQuery()
-  // const [fetchScan, { data: scanData, isLoading: scanIsLoading, isError: scanIsError }] = useScanMutation()
 
   const [visibleReferences, setVisibleReferences] = useState<{ [key: number]: boolean }>({});
   const [ipAddress, setIpAddress] = useState({

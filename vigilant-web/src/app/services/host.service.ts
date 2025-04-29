@@ -17,12 +17,6 @@ export const hostsApi = createApi({
     },
   }),
   endpoints: (build) => ({
-    // findManyHost: build.query<any[], any>({
-    //   query: (cpes) => ({
-    //     method: 'GET',
-    //     url: `findMany?cpes=${cpes}`,
-    //   }),
-    // }),
     findManyHost: build.query<Host[], any>({
       query: ({ take, skip, ports, cves, cpes }) => {
         const params = new URLSearchParams();

@@ -4,10 +4,8 @@ import Form from 'react-bootstrap/Form'
 import { useNavigate } from 'react-router-dom'
 import { useLazyFindManyHostQuery, useLazyFindUniqueQuery as useLazyFindUniqueHostsQuery } from '../../services/host.service'
 import './VigilantListPage.css'
-import { isIpOrDomain } from '../../common/is-domain-or-ips'
-import { useLazyStatusQuery, useScanMutation } from '../../services/scan-queue.service'
-import FileUpload from '../../components/FileUpload'
-import logo from './nvigilant_logo_cropped.png'
+import { useScanMutation } from '../../services/scan-queue.service'
+import logo from '../assets/nvigilant_logo_cropped.png'
 
 const VigilantListPage = () => {
   const navigate = useNavigate()
@@ -33,7 +31,7 @@ const VigilantListPage = () => {
     if (!query.range) {
       fetchManyHosts({ take: '20', skip: '0', ports: query.ports, cves: query.cves, cpes: query.cpes })
     }
-    if (query.range) {
+    if (query.range && !query.cpes && !query.cves && !query.ports) {
       fetchScan({ target: query.range })
     }
   }
@@ -106,11 +104,14 @@ const VigilantListPage = () => {
             {hostManyData?.map((host) => (
               <div key={host.id} className="host-card">
                 <strong>Host:</strong>
-                <Button onClick={() => handleHost(host.ipAddress || '')} style={{ marginTop: '20px' }}>
+                <Button onClick={() => handleHost(host.ipAddress || '')}>
                   {host.ipAddress}
                 </Button>
                 <br />
-
+                <strong>Recently CVE's:</strong>
+                <Button onClick={() => handleHost(host.cves?.[0] || '')}>
+                  {host.cves?.[0]}
+                </Button>
               </div>
             ))}
           </div>
