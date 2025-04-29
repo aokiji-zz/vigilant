@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
 import { urlBaseApiDev } from '../common/base-url'
+import { Host } from './model/host'
 
 export const hostsApi = createApi({
   reducerPath: 'hostsApi',
@@ -22,7 +23,7 @@ export const hostsApi = createApi({
     //     url: `findMany?cpes=${cpes}`,
     //   }),
     // }),
-    findManyHost: build.query<any[], any>({
+    findManyHost: build.query<Host[], any>({
       query: ({ take, skip, ports, cves, cpes }) => {
         const params = new URLSearchParams();
 

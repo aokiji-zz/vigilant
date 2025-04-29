@@ -3,6 +3,7 @@ import { useAppSelector } from '../redux/hooks'
 import { selectAuthenticatedUser } from '../redux/slices/auth.slice'
 import LoginPage from '../pages/login/LoginPage'
 import VigilantPage from '../pages/vigilant/VigilantPage'
+import VigilantListPage from '../pages/vigilant-list/VigilantListPage'
 
 
 // A wrapper for <Route> that redirects to the login
@@ -19,8 +20,8 @@ const RootNavigation = () => {
       <Routes>
 
         <Route path="/" element={<LoginPage />} />
-        <Route path="/n-vigilant" element={<PrivateRoute />}>
-          <Route path="/n-vigilant" element={<VigilantPage />} />
+        <Route path="/nvigilant" element={<PrivateRoute />}>
+          <Route path="/nvigilant" element={<VigilantListPage />} />
         </Route>
         <Route path="/vigilant" element={<VigilantPage />} />
         {/* <Route path="/about" element={<AboutPage />} /> */}

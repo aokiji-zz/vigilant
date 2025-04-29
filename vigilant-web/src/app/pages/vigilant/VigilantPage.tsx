@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { useNavigate } from 'react-router-dom'
-import { useLazyFindManyHostQuery, useLazyFindUniqueQuery as useLazyFindUniqueHostsQuery } from '../../services/host.service'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useLazyFindUniqueQuery as useLazyFindUniqueHostsQuery } from '../../services/host.service'
 import './VigilantPage.css'
 import { isIpOrDomain } from '../../common/is-domain-or-ips'
-import { useLazyStatusQuery, useScanMutation } from '../../services/scan-queue.service'
-import FileUpload from '../../components/FileUpload'
+import { useScanMutation } from '../../services/scan-queue.service'
 
+import logo from './nvigilant_logo_cropped.png'
 const VigilantPage = () => {
   const navigate = useNavigate()
-  const [fetchHosts, { data: hostData, error: hostError, isLoading: hostIsLoading }] = useLazyFindUniqueHostsQuery()
-  const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
-  const [fetchScan, { data: scanData, isLoading: scanIsLoading, isError: scanIsError }] = useScanMutation()
+  const location = useLocation()
+  const [fetchHost, { data: hostData, error: hostError, isLoading: hostIsLoading }] = useLazyFindUniqueHostsQuery()
+  // const [fetchScan, { data: scanData, isLoading: scanIsLoading, isError: scanIsError }] = useScanMutation()
 
   const [visibleReferences, setVisibleReferences] = useState<{ [key: number]: boolean }>({});
   const [ipAddress, setIpAddress] = useState({
-    ip: '',
+    ip: (location.state as string) || '',
   })
 
   const toggleReferences = (id: number) => {
@@ -29,36 +29,42 @@ const VigilantPage = () => {
   useEffect(() => {
     if ((hostError as any)?.data?.statusCode === 401) {
       localStorage.removeItem('user')
-      navigate('/')
+      navigate('/panel')
     }
   }, [hostError, hostData, navigate])
+
+  useEffect(() => {
+    if (hostData) return
+    if (ipAddress.ip) {
+      const isDomain = isIpOrDomain(ipAddress.ip)
+      if (isDomain === 'IP' || isDomain === 'DOMAIN') {
+        fetchHost(ipAddress.ip, true)
+      }
+    }
+  }, [hostData])
 
 
   const handleFetchHosts = () => {
     // validateToken()
     const isDomain = isIpOrDomain(ipAddress.ip) // Verifica se o IP é válido
     if (isDomain === 'IP') {
-      fetchHosts(ipAddress.ip, true) // Passa o IP como parâmetro
+      fetchHost(ipAddress.ip, true) // Passa o IP como parâmetro
     }
     if (isDomain === 'DOMAIN') {
-      // fetchScan({ target: ipAddress.ip }) // Passa o IP como parâmetro
-      fetchHosts(ipAddress.ip, true)
-    }
-    if (isDomain === 'IP_RANGE') {
-      fetchScan({ target: ipAddress.ip }) // Passa o IP como parâmetro
-    }
-    if (isDomain === 'INVALID') {
-      fetchManyHosts({ take: '10', skip: '0', ports: '', cves: '', cpes: '' })
+      fetchHost(ipAddress.ip, true)
     }
   }
 
   return (
     <div className="container-vigilant">
       <div className="filter">
-        <h3 className="form-title">Find by IP Address or Domain</h3>
+        <img src={logo} style={{
+          height: '2rem',
+          marginBottom: '2rem'
+        }} />
+        <h3 style={{ color: 'wheat' }} className="form-title">Find by IP Address or Domain</h3>
         <Form>
           <Form.Group controlId="ipAddress">
-            <Form.Label>IP Address</Form.Label>
             <Form.Control
               style={{ backgroundColor: 'grey' }}
               type="text"
@@ -137,26 +143,10 @@ const VigilantPage = () => {
         </div>
       )}
       <div>
-        {hostManyIsLoading ? (
-          <h3>Loading...</h3>
-        ) : hostManyError ? (
-          <p className="error-message">
-            Error fetching hosts{' '}
-            {hostManyError && 'data' in hostManyError && (hostManyError.data as any)?.message || ''}
-          </p>
-        ) : (
-          <div className="host-info">
-            {hostManyData?.map((host: any) => (
-              <div key={host.id} className="host-card">
-                <strong>Host:</strong> {host.ipAddress}
-                <br />
-
-              </div>
-            ))}
-          </div>
-        )}
+        <h3 style={{ color: 'wheat' }}>
+          Other services
+        </h3>
       </div>
-
     </div >
   )
 }

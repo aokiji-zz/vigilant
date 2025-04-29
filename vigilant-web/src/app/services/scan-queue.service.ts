@@ -17,7 +17,7 @@ export const scansApi = createApi({
     },
   }),
   endpoints: (build) => ({
-    scan: build.mutation<any, IQueueScan>({
+    scan: build.mutation<{ message: string }, IQueueScan>({
       query: ({ target }) => ({
         url: ``,
         method: 'POST',
