@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
-import { urlBaseApiDev } from '../common/base-url'
+import { urlBaseApiProd } from '../common/base-url'
 import { IPort } from '../interfaces/port.model.'
 
 export const portsApi = createApi({
   reducerPath: 'portsApi',
   tagTypes: ['Post', 'Get'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${urlBaseApiDev}/ports`,
+    baseUrl: `${urlBaseApiProd}/ports`,
     prepareHeaders: (headers, { getState }) => {
       const { access_token } = (getState() as RootState).authReducer
       if (access_token) {

@@ -13,7 +13,6 @@ import { setAuthenticatedUser } from '../../redux/slices/auth.slice'
 import { Card } from 'react-bootstrap'
 import { useLoginMutation } from '../../services/auth.service'
 import { setShowLoader } from '../../redux/slices/general.slice'
-import logo from './nvigilant_logo_cropped.png'
 
 const schema = yup.object().shape({
   email: yup.string().required(),

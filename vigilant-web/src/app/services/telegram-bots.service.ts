@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
-import { urlBaseApiDev } from '../common/base-url'
+import { urlBaseApiProd } from '../common/base-url'
 
 export const telegramBotsAPI = createApi({
   reducerPath: 'telegramBotsAPI',
   tagTypes: ['Post'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${urlBaseApiDev}/telegramBots`,
+    baseUrl: `${urlBaseApiProd}/telegramBots`,
     prepareHeaders: (headers, { getState }) => {
       const { access_token } = (getState() as RootState).authReducer
       console.log('telegramBotsAPI:: prepareHeaders access_token:', access_token)

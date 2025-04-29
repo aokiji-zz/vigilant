@@ -77,7 +77,7 @@ const VigilantListPage = () => {
             />
           </Form.Group>
           <h3 style={{ color: 'wheat', marginTop: '2rem' }}>
-            Or schedule a scan range
+            Schedule a scan range for a complete analisys
           </h3>
           <Form.Group controlId="ports">
             <Form.Control

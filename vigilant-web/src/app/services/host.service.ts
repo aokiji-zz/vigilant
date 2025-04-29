@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
-import { urlBaseApiDev } from '../common/base-url'
+import { urlBaseApiProd } from '../common/base-url'
 import { Host } from './model/host'
 
 export const hostsApi = createApi({
   reducerPath: 'hostsApi',
   tagTypes: ['Post', 'Get'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${urlBaseApiDev}/hosts`,
+    baseUrl: `${urlBaseApiProd}/hosts`,
     prepareHeaders: (headers, { getState }) => {
       const { access_token } = (getState() as RootState).authReducer
       if (access_token) {

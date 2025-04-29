@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { urlBaseApiDev } from '../common/base-url'
+import { urlBaseApiProd } from '../common/base-url'
 import { ILoginRequest } from '../interfaces/login.interface'
 
 export const authAPI = createApi({
   reducerPath: 'authAPI',
   tagTypes: ['Post'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${urlBaseApiDev}/auth`,
+    baseUrl: `${urlBaseApiProd}/auth`,
   }),
   endpoints: (build) => ({
     login: build.mutation<any, ILoginRequest>({

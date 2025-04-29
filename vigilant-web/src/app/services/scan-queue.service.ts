@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
-import { urlBaseApiDev } from '../common/base-url'
+import { urlBaseApiProd } from '../common/base-url'
 import { IQueueScan } from '../interfaces/scan.model'
 
 export const scansApi = createApi({
   reducerPath: 'scansApi',
   tagTypes: ['Post', 'Get'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${urlBaseApiDev}/scan`,
+    baseUrl: `${urlBaseApiProd}/scan`,
     prepareHeaders: (headers, { getState }) => {
       const { access_token } = (getState() as RootState).authReducer
       if (access_token) {

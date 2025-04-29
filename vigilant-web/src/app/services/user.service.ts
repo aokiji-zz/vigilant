@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
-import { urlBaseApiDev } from '../common/base-url'
+import { urlBaseApiProd } from '../common/base-url'
 
 export const userAPI = createApi({
   reducerPath: 'userAPI',
   tagTypes: ['Post'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${urlBaseApiDev}/users`,
+    baseUrl: `${urlBaseApiProd}/users`,
     prepareHeaders: (headers, { getState }) => {
       const { access_token } = (getState() as RootState).authReducer
       console.log('userAPI:: prepareHeaders access_token:', access_token)
