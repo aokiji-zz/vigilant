@@ -4,40 +4,52 @@ import Form from 'react-bootstrap/Form'
 import { useNavigate } from 'react-router-dom'
 import { useLazyFindManyHostQuery, useLazyFindUniqueQuery as useLazyFindUniqueHostsQuery } from '../../services/host.service'
 import './VigilantListPage.css'
-import { useScanMutation } from '../../services/scan-queue.service'
 import logo from '../assets/nvigilant_logo_cropped.png'
-
+import { icons } from '../../common/icons/icons'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
-  const [fetchScan, { data: scanData, isLoading: scanIsLoading, isError: scanIsError }] = useScanMutation()
-
+  const [pagination, setPagination] = useState({ skip: 0, take: 20 })
   const [query, setQuery] = useState({
     cves: '',
     cpes: '',
     ports: '',
     range: ''
   })
+  const goToHost = (ipAddress: string) => {
+    navigate('/vigilant', { state: ipAddress })
+  }
+
+  const handleFetchHosts = () => {
+    fetchManyHosts({
+      take: String(pagination.take),
+      skip: String(pagination.skip),
+      ports: query.ports,
+      cves: query.cves,
+      cpes: query.cpes
+    })
+  }
 
   useEffect(() => {
     if ((hostManyError as any)?.data?.statusCode === 401) {
       localStorage.removeItem('user')
       navigate('/')
     }
-  }, [hostManyError, hostManyData, navigate])
+    handleFetchHosts()
+  }, [hostManyError, hostManyData, navigate, pagination])
+
+  const handleNext = () => {
+    setPagination(prev => ({ ...prev, skip: prev.skip + prev.take }))
+  }
 
 
-  const handleFetchHosts = () => {
-    if (!query.range) {
-      fetchManyHosts({ take: '20', skip: '0', ports: query.ports, cves: query.cves, cpes: query.cpes })
-    }
-    if (query.range && !query.cpes && !query.cves && !query.ports) {
-      fetchScan({ target: query.range })
-    }
+  const handlePrevious = () => {
+    setPagination(prev => ({ ...prev, skip: Math.max(prev.skip - prev.take, 0) }))
   }
-  const handleHost = (ipAddress: string) => {
-    navigate('/vigilant', { state: ipAddress })
-  }
+
+
+
+
   return (
     <div className="container-vigilant">
       <img src={logo} style={{
@@ -47,7 +59,7 @@ const VigilantListPage = () => {
       <div className="filter">
         <h3 style={{ color: 'wheat' }} className="form-title">TARGET LIST</h3>
         <Form>
-          <Form.Group controlId="ipAddress">
+          <Form.Group controlId="ipAddress" style={{ marginBottom: '1rem' }} >
             <Form.Control
               style={{ backgroundColor: 'grey' }}
               type="text"
@@ -56,7 +68,7 @@ const VigilantListPage = () => {
               onChange={(e) => setQuery({ ...query, cves: e.target.value })} // Atualiza o estado
             />
           </Form.Group>
-          <Form.Group controlId="cpes">
+          <Form.Group controlId="cpes" style={{ marginBottom: '1rem' }} >
             <Form.Control
               style={{ backgroundColor: 'grey' }}
               type="text"
@@ -65,7 +77,7 @@ const VigilantListPage = () => {
               onChange={(e) => setQuery({ ...query, cpes: e.target.value })} // Atualiza o estado
             />
           </Form.Group>
-          <Form.Group controlId="ports">
+          <Form.Group controlId="ports" style={{ marginBottom: '1rem' }} >
             <Form.Control
               style={{ backgroundColor: 'grey' }}
               type="text"
@@ -74,10 +86,10 @@ const VigilantListPage = () => {
               onChange={(e) => setQuery({ ...query, ports: e.target.value })} // Atualiza o estado
             />
           </Form.Group>
-          <h3 style={{ color: 'wheat', marginTop: '2rem' }}>
+          <h3 style={{ color: 'wheat', marginBottom: '1rem' }}>
             Schedule a scan range for a complete analisys
           </h3>
-          <Form.Group controlId="ports">
+          <Form.Group controlId="ports" style={{ marginBottom: '1rem' }}>
             <Form.Control
               style={{ backgroundColor: 'grey' }}
               type="text"
@@ -86,9 +98,24 @@ const VigilantListPage = () => {
               onChange={(e) => setQuery({ ...query, range: e.target.value })} // Atualiza o estado
             />
           </Form.Group>
-          <Button onClick={handleFetchHosts} style={{ marginTop: '20px' }}>
-            {hostManyIsLoading ? 'Finding...' : 'Find'}
-          </Button>
+          <div className="filter-buttons" style={{
+            marginTop: '20px',
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}>
+            <Button onClick={handleFetchHosts}>
+              {hostManyIsLoading ? 'Finding...' : <>Find {icons.find}</>}
+            </Button>
+            <div>
+              <Button onClick={handlePrevious} disabled={pagination.skip === 0} style={{ marginRight: '10px' }}>
+                Previous
+              </Button>
+              <Button onClick={handleNext}>
+                Next
+              </Button>
+            </div>
+          </div>
+
         </Form>
       </div>
       <div>
@@ -104,19 +131,18 @@ const VigilantListPage = () => {
             {hostManyData?.map((host) => (
               <div key={host.id} className="host-card">
                 <strong>Host:</strong>
-                <Button onClick={() => handleHost(host.ipAddress || '')}>
+                <Button onClick={() => goToHost(host.ipAddress || '')}>
                   {host.ipAddress}
                 </Button>
                 <br />
                 <strong>Recently CVE's:</strong>
-                <Button onClick={() => handleHost(host.cves?.[0] || '')}>
+                <Button>
                   {host.cves?.[0]}
                 </Button>
               </div>
             ))}
           </div>
         )}
-        {scanData?.message && (<p className="error-message">{scanData.message}</p>)}
       </div>
 
     </div >

@@ -7,6 +7,7 @@ import './VigilantPage.css'
 import { isIpOrDomain } from '../../common/is-domain-or-ips'
 
 import logo from '../assets/nvigilant_logo_cropped.png'
+import { icons } from '../../common/icons/icons'
 const VigilantPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -53,6 +54,11 @@ const VigilantPage = () => {
     }
   }
 
+  const goToList = () => {
+    navigate('/nvigilant')
+  }
+
+
   return (
     <div className="container-vigilant">
       <div className="filter">
@@ -71,9 +77,20 @@ const VigilantPage = () => {
               onChange={(e) => setIpAddress({ ip: e.target.value })} // Atualiza o estado
             />
           </Form.Group>
-          <Button onClick={handleFetchHosts} style={{ marginTop: '20px' }}>
-            {hostIsLoading ? 'Loading...' : 'Find'}
-          </Button>
+          <div className="filter-buttons" style={{
+            marginTop: '20px',
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}>
+            <Button onClick={handleFetchHosts}>
+              {hostIsLoading ? 'Finding...' : <>Find {icons.find}</>}
+            </Button>
+            <div>
+              <Button onClick={() => goToList()}>
+                List {icons.list}
+              </Button>
+            </div>
+          </div>
         </Form>
       </div>
       {hostIsLoading ? (
