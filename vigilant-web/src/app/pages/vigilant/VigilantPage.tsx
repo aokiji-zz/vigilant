@@ -55,7 +55,7 @@ const VigilantPage = () => {
   }
 
   const goToList = () => {
-    navigate('/nvigilant')
+    navigate('/list')
   }
 
 

@@ -11,20 +11,18 @@ import VigilantListPage from '../pages/vigilant-list/VigilantListPage'
 const PrivateRoute = ({ ...rest }: RouteProps): React.ReactElement | null => {
   const { access_token } = useAppSelector(selectAuthenticatedUser)
   // return access_token ? <Route {...rest} /> : <Route {...rest} element={<Navigate replace to="/" />} />
-  return access_token ? <Outlet /> : <Navigate to="/" />
+  return access_token ? <Outlet /> : <Navigate to="/login" />
 }
 
 const RootNavigation = () => {
   return (
     <BrowserRouter>
       <Routes>
-
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/nvigilant" element={<PrivateRoute />}>
-          <Route path="/nvigilant" element={<VigilantListPage />} />
-        </Route>
-        <Route path="/vigilant" element={<VigilantPage />} />
-        {/* <Route path="/about" element={<AboutPage />} /> */}
+        {/* <Route path="/nvigilant" element={<PrivateRoute />}> */}
+        {/* </Route> */}
+        <Route path="/" element={<VigilantPage />} />
+        <Route path="/list" element={<VigilantListPage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
   )

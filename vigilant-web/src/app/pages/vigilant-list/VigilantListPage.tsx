@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useNavigate } from 'react-router-dom'
-import { useLazyFindManyHostQuery, useLazyFindUniqueQuery as useLazyFindUniqueHostsQuery } from '../../services/host.service'
+import { useLazyFindManyHostQuery } from '../../services/host.service'
 import './VigilantListPage.css'
 import logo from '../assets/nvigilant_logo_cropped.png'
 import { icons } from '../../common/icons/icons'
@@ -17,7 +17,7 @@ const VigilantListPage = () => {
     range: ''
   })
   const goToHost = (ipAddress: string) => {
-    navigate('/vigilant', { state: ipAddress })
+    navigate('/', { state: ipAddress })
   }
 
   const handleFetchHosts = () => {
@@ -29,15 +29,6 @@ const VigilantListPage = () => {
       cpes: query.cpes
     })
   }
-
-  useEffect(() => {
-    if ((hostManyError as any)?.data?.statusCode === 401) {
-      localStorage.removeItem('user')
-      navigate('/')
-    }
-    handleFetchHosts()
-  }, [hostManyError, hostManyData, navigate, pagination])
-
   const handleNext = () => {
     setPagination(prev => ({ ...prev, skip: prev.skip + prev.take }))
   }
@@ -47,7 +38,23 @@ const VigilantListPage = () => {
     setPagination(prev => ({ ...prev, skip: Math.max(prev.skip - prev.take, 0) }))
   }
 
-
+  useEffect(() => {
+    if (hostManyData) {
+      fetchManyHosts({
+        take: String(pagination.take),
+        skip: String(pagination.skip),
+        ports: query.ports,
+        cves: query.cves,
+        cpes: query.cpes
+      })
+    }
+    if (!hostManyData) {
+      fetchManyHosts({
+        take: String(pagination.take),
+        skip: String(pagination.skip),
+      })
+    }
+  }, [pagination, hostManyData])
 
 
   return (
