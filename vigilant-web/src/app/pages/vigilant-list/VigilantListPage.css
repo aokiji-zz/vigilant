@@ -81,3 +81,37 @@
   color: blue;
   text-decoration: underline;
 }
+
+.filter-container {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap; /* para quebrar linha em telas pequenas */
+}
+
+.map-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.filter {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+}
+
+.status {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: white;
+}
+.status-up {
+  background-color: #4fb373; /* verde claro */
+}
+.status-down {
+  background-color: #ce5555; /* vermelho */
+}

@@ -18,10 +18,13 @@ export interface Host {
   lastScanTool?: string;
   blameUser?: Date;
   blameUserId?: number;
+  whois: Whois
 }
 
 // interfaces/vulnerability.interface.ts
-
+interface Whois {
+  country: string
+}
 interface Vulnerability {
   id?: number;
   description?: string;

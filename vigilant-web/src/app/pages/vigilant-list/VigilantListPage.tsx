@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useNavigate } from 'react-router-dom'
@@ -6,6 +6,7 @@ import { useLazyFindManyHostQuery } from '../../services/host.service'
 import './VigilantListPage.css'
 import logo from '../assets/nvigilant_logo_cropped.png'
 import { icons } from '../../common/icons/icons'
+import DashboardMaps from './dashboard-map'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
@@ -14,7 +15,6 @@ const VigilantListPage = () => {
     cves: '',
     cpes: '',
     ports: '',
-    range: ''
   })
   const goToHost = (ipAddress: string) => {
     navigate('/', { state: ipAddress })
@@ -56,6 +56,25 @@ const VigilantListPage = () => {
     }
   }, [pagination, hostManyData])
 
+  const countryPopularityData = useMemo(() => {
+    if (!hostManyData) return [["Country", "Popularity"]]; // também corrige retorno vazio
+
+    const counts = hostManyData.reduce((acc, host) => {
+      const country = host?.whois?.country;
+      if (!country) return acc;
+      acc[country] = (acc[country] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const chartData: (string | number)[][] = [["Country", "Popularity"]];
+    for (const [country, count] of Object.entries(counts)) {
+      chartData.push([country, count]);
+    }
+
+    return chartData;
+  }, [hostManyData]);
+
+
 
   return (
     <div className="container-vigilant">
@@ -63,72 +82,65 @@ const VigilantListPage = () => {
         height: '2rem',
         marginBottom: '2rem'
       }} />
-      <div className="filter">
-        <h3 style={{ color: 'wheat' }} className="form-title">TARGET LIST</h3>
-        <Form>
-          <Form.Group controlId="ipAddress" style={{ marginBottom: '1rem' }} >
-            <Form.Control
-              style={{ backgroundColor: 'grey' }}
-              type="text"
-              placeholder="Filter by CVE's"
-              value={query.cves}
-              onChange={(e) => setQuery({ ...query, cves: e.target.value })} // Atualiza o estado
-            />
-          </Form.Group>
-          <Form.Group controlId="cpes" style={{ marginBottom: '1rem' }} >
-            <Form.Control
-              style={{ backgroundColor: 'grey' }}
-              type="text"
-              placeholder="Filter by CPE's"
-              value={query.cpes}
-              onChange={(e) => setQuery({ ...query, cpes: e.target.value })} // Atualiza o estado
-            />
-          </Form.Group>
-          <Form.Group controlId="ports" style={{ marginBottom: '1rem' }} >
-            <Form.Control
-              style={{ backgroundColor: 'grey' }}
-              type="text"
-              placeholder="Filter by PORTS"
-              value={query.ports}
-              onChange={(e) => setQuery({ ...query, ports: e.target.value })} // Atualiza o estado
-            />
-          </Form.Group>
-          <h3 style={{ color: 'wheat', marginBottom: '1rem' }}>
-            Schedule a scan range for a complete analisys
-          </h3>
-          <Form.Group controlId="ports" style={{ marginBottom: '1rem' }}>
-            <Form.Control
-              style={{ backgroundColor: 'grey' }}
-              type="text"
-              placeholder="192.168.1-255"
-              value={query.range}
-              onChange={(e) => setQuery({ ...query, range: e.target.value })} // Atualiza o estado
-            />
-          </Form.Group>
-          <div className="filter-buttons" style={{
-            marginTop: '20px',
-            display: 'flex',
-            justifyContent: 'space-between'
-          }}>
-            <Button onClick={handleFetchHosts}>
-              {hostManyIsLoading ? 'Finding...' : <>Find {icons.find}</>}
-            </Button>
-            <div>
-              <Button onClick={handlePrevious} disabled={pagination.skip === 0} style={{ marginRight: '10px' }}>
-                Previous
-              </Button>
-              <Button onClick={handleNext}>
-                Next
-              </Button>
-            </div>
-          </div>
+      <div className="filter-container">
+        <div className="map-section">
+          <DashboardMaps data={countryPopularityData} />
+        </div>
+        <div className="filter">
+          <h3 style={{ color: 'wheat' }} className="form-title">TARGET LIST</h3>
+          <Form style={{ width: '18rem' }}>
+            <Form.Group controlId="ipAddress" style={{ marginBottom: '1rem' }} >
+              <Form.Control
+                style={{ backgroundColor: 'grey' }}
+                type="text"
+                placeholder="Filter by CVE's"
+                value={query.cves}
+                onChange={(e) => setQuery({ ...query, cves: e.target.value })} // Atualiza o estado
+              />
+            </Form.Group>
+            <Form.Group controlId="cpes" style={{ marginBottom: '1rem' }} >
+              <Form.Control
+                style={{ backgroundColor: 'grey' }}
+                type="text"
+                placeholder="Filter by CPE's"
+                value={query.cpes}
+                onChange={(e) => setQuery({ ...query, cpes: e.target.value })} // Atualiza o estado
+              />
+            </Form.Group>
+            <Form.Group controlId="ports" style={{ marginBottom: '1rem' }} >
+              <Form.Control
+                style={{ backgroundColor: 'grey' }}
+                type="text"
+                placeholder="Filter by PORTS"
+                value={query.ports}
+                onChange={(e) => setQuery({ ...query, ports: e.target.value })} // Atualiza o estado
+              />
+            </Form.Group>
 
-        </Form>
+            <div className="filter-buttons" style={{
+              marginTop: '20px',
+              display: 'flex',
+              justifyContent: 'space-between'
+            }}>
+              <Button onClick={handleFetchHosts}>
+                {hostManyIsLoading ? 'Finding...' : <>Find {icons.find}</>}
+              </Button>
+              <div>
+                <Button onClick={handlePrevious} disabled={pagination.skip === 0} style={{ marginRight: '10px' }}>
+                  Previous
+                </Button>
+                <Button onClick={handleNext}>
+                  Next
+                </Button>
+              </div>
+            </div>
+
+          </Form>
+        </div>
       </div>
+
       <div>
-        {hostManyIsLoading ? (
-          <h3 style={{ color: 'wheat' }}>Loading informations...</h3>
-        ) : hostManyError ? (
+        {hostManyError ? (
           <p className="error-message">
             Error fetching hosts{' '}
             {hostManyError && 'data' in hostManyError && (hostManyError.data as any)?.message || ''}
@@ -142,10 +154,18 @@ const VigilantListPage = () => {
                   {host.ipAddress}
                 </Button>
                 <br />
-                <strong>Recently CVE's:</strong>
-                <Button>
-                  {host.cves?.[0]}
-                </Button>
+                <strong>Country by registration: </strong>
+                {host?.whois?.country} <span className={`fi fi-${host?.whois?.country.toLowerCase()}`}></span>
+                <br />
+                <strong>Recently CVE: </strong>
+                {host.cves?.[0]}
+                <br />
+                <strong>Ports: </strong>
+                {host.portNumbers?.join(' | ')}
+                <strong>Status: </strong>
+                <span className={`status ${host.status === 'UP' ? 'status-up' : 'status-down'}`}>
+                  {host.status}
+                </span>
               </div>
             ))}
           </div>

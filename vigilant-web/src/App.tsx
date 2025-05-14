@@ -2,6 +2,7 @@ import { Provider } from 'react-redux'
 import RootNavigation from './app/navigation/RootNavigation'
 import { store } from './app/redux/store'
 import 'react-notifications/lib/notifications.css'
+import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { useAppDispatch, useAppSelector } from './app/redux/hooks'
 import { selectGeneral } from './app/redux/slices/general.slice'
 import { useEffect, useState } from 'react'
