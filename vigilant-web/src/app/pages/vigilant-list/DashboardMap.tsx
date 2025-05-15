@@ -11,9 +11,20 @@ const DashboardMaps = ({ data }: Props) => {
     datalessRegionColor: "#1f1f1f", // regiões sem dados (opcional)
     defaultColor: "#444", // cor base para países com poucos dados
     colorAxis: {
-      colors: ["#ffcccc", "#ff0000", "#8b0000"], // do claro ao vermelho escuro
+      colors: [
+        "#ffcccc", // rosa claro
+        "#ff9999", // rosa médio
+        "#ff6666", // vermelho claro
+        "#ff3333", // vermelho vivo
+        "#ff0000", // vermelho puro
+        "#cc0000", // vermelho escuro
+        "#990000", // bordô claro
+        "#660000", // bordô escuro
+        "#8b0000"  // vermelho bem escuro (DarkRed)
+      ]
+
     },
-    legend: false,
+    legend: false
   };
   return (
     <Chart

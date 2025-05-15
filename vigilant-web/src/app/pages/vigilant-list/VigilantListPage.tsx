@@ -1,15 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useNavigate } from 'react-router-dom'
-import { useLazyFindManyHostQuery } from '../../services/host.service'
+import { useLazyDashbpardQuery, useLazyFindManyHostQuery } from '../../services/host.service'
 import './VigilantListPage.css'
 import logo from '../assets/nvigilant_logo_cropped.png'
 import { icons } from '../../common/icons/icons'
-import DashboardMaps from './dashboard-map'
+import DashboardMaps from './DashboardMap'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
+  const [fetchDashboard, { data: dashboardData, error: dashboardError, isLoading: dashboardIsLoading }] = useLazyDashbpardQuery()
   const [pagination, setPagination] = useState({ skip: 0, take: 20 })
   const [query, setQuery] = useState({
     cves: '',
@@ -21,6 +22,11 @@ const VigilantListPage = () => {
   }
 
   const handleFetchHosts = () => {
+    fetchDashboard({
+      ports: query.ports,
+      cves: query.cves,
+      cpes: query.cpes
+    })
     fetchManyHosts({
       take: String(pagination.take),
       skip: String(pagination.skip),
@@ -49,32 +55,17 @@ const VigilantListPage = () => {
       })
     }
     if (!hostManyData) {
+      fetchDashboard({
+        ports: query.ports,
+        cves: query.cves,
+        cpes: query.cpes
+      })
       fetchManyHosts({
         take: String(pagination.take),
         skip: String(pagination.skip),
       })
     }
   }, [pagination, hostManyData])
-
-  const countryPopularityData = useMemo(() => {
-    if (!hostManyData) return [["Country", "Popularity"]]; // também corrige retorno vazio
-
-    const counts = hostManyData.reduce((acc, host) => {
-      const country = host?.whois?.country;
-      if (!country) return acc;
-      acc[country] = (acc[country] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    const chartData: (string | number)[][] = [["Country", "Popularity"]];
-    for (const [country, count] of Object.entries(counts)) {
-      chartData.push([country, count]);
-    }
-
-    return chartData;
-  }, [hostManyData]);
-
-
 
   return (
     <div className="container-vigilant">
@@ -84,7 +75,7 @@ const VigilantListPage = () => {
       }} />
       <div className="filter-container">
         <div className="map-section">
-          <DashboardMaps data={countryPopularityData} />
+          <DashboardMaps data={dashboardData || ['Country', "Hosts"]} />
         </div>
         <div className="filter">
           <h3 style={{ color: 'wheat' }} className="form-title">TARGET LIST</h3>
@@ -162,9 +153,17 @@ const VigilantListPage = () => {
                 <br />
                 <strong>Ports: </strong>
                 {host.portNumbers?.join(' | ')}
+                <br />
                 <strong>Status: </strong>
-                <span className={`status ${host.status === 'UP' ? 'status-up' : 'status-down'}`}>
-                  {host.status}
+                <span
+                  className={`status ${host.status === 'UP'
+                    ? 'status-up'
+                    : host.status === 'DOWN'
+                      ? 'status-down'
+                      : 'status-pending'
+                    }`}
+                >
+                  {host.status || "PENDING"}
                 </span>
               </div>
             ))}

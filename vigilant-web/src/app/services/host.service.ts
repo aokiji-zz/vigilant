@@ -33,6 +33,18 @@ export const hostsApi = createApi({
         };
       },
     }),
+    dashbpard: build.query<any, any>({
+      query: ({ ports, cves, cpes }) => {
+        const params = new URLSearchParams();
+        if (ports) params.append('ports', ports);
+        if (cves) params.append('cves', cves);
+        if (cpes) params.append('cpes', cpes);
+        return {
+          method: 'GET',
+          url: `dashboard?${params.toString()}`,
+        };
+      },
+    }),
     findUnique: build.query<any, string>({
       query: (ipAddressOrDomain) => ({
         method: 'GET',
@@ -42,4 +54,4 @@ export const hostsApi = createApi({
   }),
 
 })
-export const { useLazyFindManyHostQuery, useLazyFindUniqueQuery } = hostsApi
+export const { useLazyFindManyHostQuery, useLazyFindUniqueQuery, useLazyDashbpardQuery } = hostsApi

@@ -115,3 +115,6 @@
 .status-down {
   background-color: #ce5555; /* vermelho */
 }
+.status-pending {
+  background-color: #aa9c8f; /* cinza */
+}
