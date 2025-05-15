@@ -7,6 +7,7 @@ import './VigilantListPage.css'
 import logo from '../assets/nvigilant_logo_cropped.png'
 import { icons } from '../../common/icons/icons'
 import DashboardMaps from './DashboardMap'
+import PieChart from '../../components/charts/PieCharts'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
@@ -128,6 +129,9 @@ const VigilantListPage = () => {
 
           </Form>
         </div>
+        {/* <div className="map-section">
+          <PieChart />
+        </div> */}
       </div>
 
       <div>
