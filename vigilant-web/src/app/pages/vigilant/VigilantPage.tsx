@@ -66,7 +66,7 @@ const VigilantPage = () => {
           height: '2rem',
           marginBottom: '2rem'
         }} />
-        <h3 style={{ color: 'wheat' }} className="form-title">Find by IP Address or Domain</h3>
+        <h3 style={{ color: 'wheat' }} className="form-title">Search for vulnerabilities by IP or Domain</h3>
         <Form>
           <Form.Group controlId="ipAddress">
             <Form.Control
@@ -82,7 +82,7 @@ const VigilantPage = () => {
             display: 'flex',
             justifyContent: 'space-between'
           }}>
-            <Button onClick={handleFetchHosts}>
+            <Button onClick={handleFetchHosts} disabled={!ipAddress.ip || hostIsLoading}>
               {hostIsLoading ? 'Finding...' : <>Find {icons.find}</>}
             </Button>
             <div>

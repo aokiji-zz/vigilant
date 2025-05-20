@@ -82,6 +82,13 @@
   text-decoration: underline;
 }
 
+.host-card:hover {
+  border-left: 0 solid #3b82f6;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: all 0.2s ease-in-out;
+}
+
 .filter-container {
   display: flex;
   flex-direction: row;
@@ -98,11 +105,11 @@
 }
 
 .filter {
-  flex: 1;
   min-width: 300px;
   max-width: 400px;
 }
 
+/* status */
 .status {
   padding: 4px 8px;
   border-radius: 6px;
@@ -118,3 +125,4 @@
 .status-pending {
   background-color: #aa9c8f; /* cinza */
 }
+

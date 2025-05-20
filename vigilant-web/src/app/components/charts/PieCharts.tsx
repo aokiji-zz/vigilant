@@ -1,34 +1,28 @@
 import React from "react";
 import { Chart, ChartWrapperOptions } from "react-google-charts";
 
-export const data = [
-  ["Task", "Hours per Day"],
-  ["Work", 10],
-  ["Eat", 2],
-  ["Commute", 2],
-  ["Sleep", 8],
-];
-
-const options: ChartWrapperOptions["options"] = {
-  title: "Hosts with CVEs or exploits",
-  backgroundColor: "transparent", // azul-escuro com transparência
-  legend: {
-    position: "right",
-    alignment: "center",
-    textStyle: {
-      color: "#fff", // Cor do texto da legenda
-      fontSize: 12, // Tamanho da fonte
-    },
-  },
-  slices: {
-    0: { color: "#ff0000" }, // Cor do primeiro pedaço (Work)
-    1: { color: "#00ff00" }, // Cor do segundo pedaço (Eat)
-    2: { color: "#0000ff" }, // Cor do terceiro pedaço (Commute)
-    3: { color: "#ffff00" }, // Cor do quarto pedaço (Sleep)
-  },
+type Props = {
+  data: (string | number)[][];
 };
 
-const PieChart = () => {
+const PieChart = ({ data }: Props) => {
+  const options: ChartWrapperOptions["options"] = {
+    backgroundColor: "transparent",
+    legend: {
+      position: "right",
+      alignment: "center",
+      textStyle: {
+        color: "#fff",
+        fontSize: 12,
+      },
+    },
+    slices: {
+      0: { color: "#4fb373" }, // UP
+      1: { color: "#ce5555" }, // DOWN
+      2: { color: "#aa9c8f" }, // PENDING
+    },
+  };
+
   return (
     <Chart
       chartType="PieChart"
@@ -38,5 +32,6 @@ const PieChart = () => {
       height="100%"
     />
   );
-}
+};
+
 export default PieChart;

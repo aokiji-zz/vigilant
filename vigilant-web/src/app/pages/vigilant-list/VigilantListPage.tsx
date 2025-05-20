@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useNavigate } from 'react-router-dom'
-import { useLazyDashbpardQuery, useLazyFindManyHostQuery } from '../../services/host.service'
+import { useLazyDashboardCountryQuery, useLazyFindManyHostQuery, useLazyDashboardStatusQuery } from '../../services/host.service'
 import './VigilantListPage.css'
 import logo from '../assets/nvigilant_logo_cropped.png'
 import { icons } from '../../common/icons/icons'
@@ -11,7 +11,8 @@ import PieChart from '../../components/charts/PieCharts'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
-  const [fetchDashboard, { data: dashboardData, error: dashboardError, isLoading: dashboardIsLoading }] = useLazyDashbpardQuery()
+  const [fetchDashboardCountry, { data: dashboardCountryData }] = useLazyDashboardCountryQuery()
+  const [fetchDashboardStatus, { data: dashboardStatusData }] = useLazyDashboardStatusQuery()
   const [pagination, setPagination] = useState({ skip: 0, take: 20 })
   const [query, setQuery] = useState({
     cves: '',
@@ -23,7 +24,12 @@ const VigilantListPage = () => {
   }
 
   const handleFetchHosts = () => {
-    fetchDashboard({
+    fetchDashboardCountry({
+      ports: query.ports,
+      cves: query.cves,
+      cpes: query.cpes
+    })
+    fetchDashboardStatus({
       ports: query.ports,
       cves: query.cves,
       cpes: query.cpes
@@ -56,15 +62,20 @@ const VigilantListPage = () => {
       })
     }
     if (!hostManyData) {
-      fetchDashboard({
+      fetchDashboardCountry({
         ports: query.ports,
         cves: query.cves,
         cpes: query.cpes
+      })
+      fetchDashboardStatus({
+        take: String(pagination.take),
+        skip: String(pagination.skip),
       })
       fetchManyHosts({
         take: String(pagination.take),
         skip: String(pagination.skip),
       })
+
     }
   }, [pagination, hostManyData])
 
@@ -76,7 +87,7 @@ const VigilantListPage = () => {
       }} />
       <div className="filter-container">
         <div className="map-section">
-          <DashboardMaps data={dashboardData || ['Country', "Hosts"]} />
+          <DashboardMaps data={dashboardCountryData || ['Country', "Hosts"]} />
         </div>
         <div className="filter">
           <h3 style={{ color: 'wheat' }} className="form-title">TARGET LIST</h3>
@@ -85,7 +96,7 @@ const VigilantListPage = () => {
               <Form.Control
                 style={{ backgroundColor: 'grey' }}
                 type="text"
-                placeholder="Filter by CVE's"
+                placeholder="Filter by CVE's: CVE-2025-1234"
                 value={query.cves}
                 onChange={(e) => setQuery({ ...query, cves: e.target.value })} // Atualiza o estado
               />
@@ -103,7 +114,7 @@ const VigilantListPage = () => {
               <Form.Control
                 style={{ backgroundColor: 'grey' }}
                 type="text"
-                placeholder="Filter by PORTS"
+                placeholder="Filter by PORTS: 80,443..."
                 value={query.ports}
                 onChange={(e) => setQuery({ ...query, ports: e.target.value })} // Atualiza o estado
               />
@@ -114,8 +125,10 @@ const VigilantListPage = () => {
               display: 'flex',
               justifyContent: 'space-between'
             }}>
-              <Button onClick={handleFetchHosts}>
-                {hostManyIsLoading ? 'Finding...' : <>Find {icons.find}</>}
+              <Button onClick={handleFetchHosts}
+                disabled={hostManyIsLoading || (!query.cves && !query.cpes && !query.ports)}
+              >
+                {hostManyIsLoading ? 'Searching...' : <>Search {icons.find}</>}
               </Button>
               <div>
                 <Button onClick={handlePrevious} disabled={pagination.skip === 0} style={{ marginRight: '10px' }}>
@@ -129,9 +142,9 @@ const VigilantListPage = () => {
 
           </Form>
         </div>
-        {/* <div className="map-section">
-          <PieChart />
-        </div> */}
+        <div className="map-section">
+          <PieChart data={dashboardStatusData || ['Status', "Count"]} />
+        </div>
       </div>
 
       <div>

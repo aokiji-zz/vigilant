@@ -33,7 +33,7 @@ export const hostsApi = createApi({
         };
       },
     }),
-    dashbpard: build.query<any, any>({
+    dashboardCountry: build.query<any, any>({
       query: ({ ports, cves, cpes }) => {
         const params = new URLSearchParams();
         if (ports) params.append('ports', ports);
@@ -41,7 +41,19 @@ export const hostsApi = createApi({
         if (cpes) params.append('cpes', cpes);
         return {
           method: 'GET',
-          url: `dashboard?${params.toString()}`,
+          url: `dashboard/country?${params.toString()}`,
+        };
+      },
+    }),
+    dashboardStatus: build.query<any, any>({
+      query: ({ ports, cves, cpes }) => {
+        const params = new URLSearchParams();
+        if (ports) params.append('ports', ports);
+        if (cves) params.append('cves', cves);
+        if (cpes) params.append('cpes', cpes);
+        return {
+          method: 'GET',
+          url: `dashboard/status?${params.toString()}`,
         };
       },
     }),
@@ -54,4 +66,4 @@ export const hostsApi = createApi({
   }),
 
 })
-export const { useLazyFindManyHostQuery, useLazyFindUniqueQuery, useLazyDashbpardQuery } = hostsApi
+export const { useLazyFindManyHostQuery, useLazyFindUniqueQuery, useLazyDashboardCountryQuery, useLazyDashboardStatusQuery } = hostsApi
