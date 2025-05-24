@@ -117,12 +117,12 @@
   color: white;
 }
 .status-up {
-  background-color: #4fb373; /* verde claro */
+  background-color: #4fb373; 
 }
 .status-down {
-  background-color: #ce5555; /* vermelho */
+  background-color: #ce5555; 
 }
 .status-pending {
-  background-color: #aa9c8f; /* cinza */
+  background-color: #aa9c8f; 
 }
 
