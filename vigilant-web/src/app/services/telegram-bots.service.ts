@@ -2,14 +2,14 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
 import { urlBaseApiProd } from '../common/base-url'
 
-export const telegramBotsAPI = createApi({
-  reducerPath: 'telegramBotsAPI',
+export const messageApi = createApi({
+  reducerPath: 'messageApi',
   tagTypes: ['Post'],
   baseQuery: fetchBaseQuery({
     baseUrl: `${urlBaseApiProd}/telegramBots`,
     prepareHeaders: (headers, { getState }) => {
       const { access_token } = (getState() as RootState).authReducer
-      console.log('telegramBotsAPI:: prepareHeaders access_token:', access_token)
+      console.log('messageApi:: prepareHeaders access_token:', access_token)
       if (access_token) {
         headers.set('authorization', `Bearer ${access_token}`)
       }
@@ -27,4 +27,4 @@ export const telegramBotsAPI = createApi({
     }),
   }),
 })
-export const { useSendMessageMutation } = telegramBotsAPI
+export const { useSendMessageMutation } = messageApi

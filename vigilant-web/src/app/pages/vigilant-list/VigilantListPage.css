@@ -125,4 +125,30 @@
 .status-pending {
   background-color: #aa9c8f; 
 }
+/* Risk levels */
+.risk-low {
+  background-color: #4fb373; /* Verde para baixo risco */
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  display: inline-block;
+}
 
+.risk-medium {
+  background-color: #f59e0b; /* Laranja para risco médio */
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.risk-high {
+  background-color: #ce5555; /* Vermelho para alto risco */
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  display: inline-block;
+}

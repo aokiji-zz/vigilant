@@ -7,12 +7,14 @@ import './NVigilantPage.css'
 import logo from '../assets/nvigilant_logo_cropped.png'
 import { icons } from '../../common/icons/icons'
 import { useScanMutation } from '../../services/scan-queue.service'
+import FileUpload from '../../components/FileUpload'
 const VigilantPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [fetchScan, { data: scanData, error: scanError, isLoading: scanIsLoading }] = useScanMutation()
-  const [ipAddress, setIpAddress] = useState({
+  const [form, setForm] = useState({
     ip: (location.state as string) || '',
+    folderName: ''
   })
 
 
@@ -27,7 +29,7 @@ const VigilantPage = () => {
 
 
   const handleFetchHosts = () => {
-    fetchScan({ target: ipAddress.ip })
+    fetchScan({ target: form.ip })
 
   }
 
@@ -50,10 +52,23 @@ const VigilantPage = () => {
               style={{ backgroundColor: 'grey' }}
               type="text"
               placeholder="example.com or 192.168.0.1"
-              value={ipAddress.ip}
-              onChange={(e) => setIpAddress({ ip: e.target.value })} // Atualiza o estado
+              value={form.ip}
+              onChange={(e) => setForm({ ip: e.target.value, folderName: '' })} // Atualiza o estado
             />
           </Form.Group>
+          <br />
+          <Form.Group controlId="folderName">
+            <Form.Control
+              style={{ backgroundColor: 'grey' }}
+              type="text"
+              placeholder="Folder name"
+              value={form.folderName}
+              onChange={(e) => setForm({ ip: '', folderName: e.target.value })} // Atualiza o estado
+            />
+          </Form.Group>
+          <br />
+          <FileUpload folderName={form.folderName} />
+          <br />
           <div className="filter-buttons" style={{
             marginTop: '20px',
             display: 'flex',

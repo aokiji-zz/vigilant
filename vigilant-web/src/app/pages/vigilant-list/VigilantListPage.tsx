@@ -8,6 +8,7 @@ import logo from '../assets/nvigilant_logo_cropped.png'
 import { icons } from '../../common/icons/icons'
 import DashboardMaps from './DashboardMap'
 import PieChart from '../../components/charts/PieCharts'
+import { calculateRisk } from '../../common/calculate-risk'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
@@ -181,6 +182,11 @@ const VigilantListPage = () => {
                     }`}
                 >
                   {host.status || "PENDING"}
+                </span>
+                <br />
+                <strong>Risk Level: </strong>
+                <span className={`risk-level risk-${calculateRisk(host).toLowerCase()}`}>
+                  {calculateRisk(host)}
                 </span>
               </div>
             ))}

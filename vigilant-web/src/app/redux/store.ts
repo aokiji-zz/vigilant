@@ -5,9 +5,10 @@ import { authReducer } from './slices/auth.slice'
 import { generalReducer } from './slices/general.slice'
 import { userReducer } from './slices/user.slice'
 import { userAPI } from '../services/user.service'
-import { telegramBotsAPI } from '../services/telegram-bots.service'
+import { messageApi } from '../services/telegram-bots.service'
 import { hostsApi } from '../services/host.service'
 import { scansApi } from '../services/scan-queue.service'
+import { filesAPi } from '../services/files.service'
 
 export const store = configureStore({
   reducer: {
@@ -18,16 +19,18 @@ export const store = configureStore({
 
     [authAPI.reducerPath]: authAPI.reducer,
     [userAPI.reducerPath]: userAPI.reducer,
-    [telegramBotsAPI.reducerPath]: telegramBotsAPI.reducer,
+    [messageApi.reducerPath]: messageApi.reducer,
     [hostsApi.reducerPath]: hostsApi.reducer,
     [scansApi.reducerPath]: scansApi.reducer,
+    [filesAPi.reducerPath]: filesAPi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
     .concat([authAPI.middleware])
     .concat([userAPI.middleware])
-    .concat([telegramBotsAPI.middleware])
+    .concat([messageApi.middleware])
     .concat([hostsApi.middleware])
     .concat([scansApi.middleware])
+    .concat([filesAPi.middleware])
 })
 
 export type RootState = ReturnType<typeof store.getState>

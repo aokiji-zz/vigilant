@@ -1,30 +1,46 @@
-import React, { useState } from 'react';
-import './FileUpload.css'; // Importe o CSS para estilização
-const FileUpload = () => {
-  const [file, setFile] = useState<File | null>(null);
+// components/FileUpload.tsx
+
+import React, { useState } from 'react'
+import './FileUpload.css'
+import { useUploadFileMutation } from '../services/files.service'
+
+const FileUpload = ({ folderName = '' }: { folderName: string }) => {
+  const [files, setFiles] = useState<File[]>([])
+  const [uploadFile, { isLoading, error, data }] = useUploadFileMutation()
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setFile(event.target.files[0]); // Armazena o arquivo selecionado no estado
+    if (event.target.files) {
+      setFiles(Array.from(event.target.files))
     }
-  };
+  }
+  const handleUpload = async () => {
+    if (files.length === 0) return
 
-  const handleUpload = () => {
-    if (file) {
-      console.log('Uploading file:', file.name);
-      // Aqui você pode implementar a lógica para enviar o arquivo ao servidor
+    const formData = new FormData()
+    files.forEach((file) => formData.append('files', file)) // ✅ nome do campo = files
+
+    try {
+      await uploadFile({ formData, folderName }).unwrap()
+    } catch (err) {
+      console.error('Erro ao enviar o arquivo:', err)
     }
-  };
+  }
 
   return (
-    <div className='file-upload-container'>
-      <input type="file" onChange={handleFileChange} />
-      {file && <p>Selected file: {file.name}</p>}
-      <button onClick={handleUpload} disabled={!file}>
-        Upload File
+    <div className="file-upload-container">
+      <input type="file" onChange={handleFileChange} multiple />
+      <ul>
+        {files.map((file, idx) => (
+          <li key={idx}>{file.name}</li>
+        ))}
+      </ul>
+      <button onClick={handleUpload} disabled={!files || isLoading}>
+        {isLoading ? 'Enviando...' : 'Upload File'}
       </button>
+      {error && <p className="error-message">Erro no upload</p>}
+      {data && <p className="success-message">Upload bem-sucedido!</p>}
     </div>
-  );
-};
+  )
+}
 
-export default FileUpload;
+export default FileUpload
