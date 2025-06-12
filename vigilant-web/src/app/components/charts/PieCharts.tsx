@@ -7,7 +7,6 @@ type Props = {
 
 const PieChart = ({ data }: Props) => {
   const options: ChartWrapperOptions["options"] = {
-    title: "Hosts Status",
     backgroundColor: "transparent",
     legend: {
       position: "right",

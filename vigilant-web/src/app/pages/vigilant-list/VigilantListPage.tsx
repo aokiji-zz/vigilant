@@ -97,7 +97,7 @@ const VigilantListPage = () => {
               <Form.Control
                 style={{ backgroundColor: 'grey' }}
                 type="text"
-                placeholder="Filter by CVE's: CVE-2025-1234"
+                placeholder="by CVE's: CVE-2025-1234"
                 value={query.cves}
                 onChange={(e) => setQuery({ ...query, cves: e.target.value })} // Atualiza o estado
               />
@@ -106,7 +106,7 @@ const VigilantListPage = () => {
               <Form.Control
                 style={{ backgroundColor: 'grey' }}
                 type="text"
-                placeholder="Filter by CPE's"
+                placeholder="by CPE's"
                 value={query.cpes}
                 onChange={(e) => setQuery({ ...query, cpes: e.target.value })} // Atualiza o estado
               />
@@ -115,7 +115,7 @@ const VigilantListPage = () => {
               <Form.Control
                 style={{ backgroundColor: 'grey' }}
                 type="text"
-                placeholder="Filter by PORTS: 80,443..."
+                placeholder="by PORTS: 80,443..."
                 value={query.ports}
                 onChange={(e) => setQuery({ ...query, ports: e.target.value })} // Atualiza o estado
               />

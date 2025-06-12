@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
-import { FileUpload } from './model/files'
+import { ExtractResponse, CrawlerByUpload, CrawlerByUrl } from './model/files'
 import { urlFileApiProd } from '../common/base-url'
 
 export const filesAPi = createApi({
   reducerPath: 'filesAPi',
   tagTypes: ['Post', 'Get'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${urlFileApiProd}/upload-by-user`,
+    baseUrl: `${urlFileApiProd}`,
     prepareHeaders: (headers, { getState }) => {
       const { access_token } = (getState() as RootState).authReducer
       if (access_token) {
@@ -17,11 +17,18 @@ export const filesAPi = createApi({
     },
   }),
   endpoints: (build) => ({
-    uploadFile: build.mutation<{ message: string }, FileUpload>({
+    uploadFile: build.mutation<ExtractResponse, CrawlerByUpload>({
       query: ({ folderName, formData }) => ({
-        url: `${folderName}`,
+        url: `crawler-by-upload/${folderName}`,
         method: 'POST',
         body: formData,
+      }),
+    }),
+    url: build.mutation<ExtractResponse, CrawlerByUrl>({
+      query: ({ url }) => ({
+        url: `crawler-by-url`,
+        method: 'POST',
+        body: { url },
       }),
     }),
   }),
