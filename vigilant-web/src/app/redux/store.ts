@@ -9,6 +9,7 @@ import { messageApi } from '../services/telegram-bots.service'
 import { hostsApi } from '../services/host.service'
 import { scansApi } from '../services/scan-queue.service'
 import { filesAPi } from '../services/files.service'
+import { urlScanAPI } from '../services/url-scan.service'
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore({
     [hostsApi.reducerPath]: hostsApi.reducer,
     [scansApi.reducerPath]: scansApi.reducer,
     [filesAPi.reducerPath]: filesAPi.reducer,
+    [urlScanAPI.reducerPath]: urlScanAPI.reducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
     .concat([authAPI.middleware])
@@ -31,6 +33,7 @@ export const store = configureStore({
     .concat([hostsApi.middleware])
     .concat([scansApi.middleware])
     .concat([filesAPi.middleware])
+    .concat([urlScanAPI.middleware])
 })
 
 export type RootState = ReturnType<typeof store.getState>

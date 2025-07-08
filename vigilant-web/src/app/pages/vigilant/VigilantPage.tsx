@@ -3,16 +3,17 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useLazyFindUniqueQuery as useLazyFindUniqueHostsQuery } from '../../services/host.service'
-import './VigilantPage.css'
+import '../vigilant-list/VigilantListPage.css'
 import { isIpOrDomain } from '../../common/is-domain-or-ips'
-
+import * as tldts from 'tldts'
 import logo from '../assets/nvigilant_logo_cropped.png'
 import { icons } from '../../common/icons/icons'
+import { useExtractUrlMutation } from '../../services/url-scan.service'
 const VigilantPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [fetchHost, { data: hostData, error: hostError, isLoading: hostIsLoading }] = useLazyFindUniqueHostsQuery()
-
+  const [fetchScanUrl, { data: urlData }] = useExtractUrlMutation()
   const [visibleReferences, setVisibleReferences] = useState<{ [key: number]: boolean }>({});
   const [ipAddress, setIpAddress] = useState({
     ip: (location.state as string) || '',
@@ -21,7 +22,7 @@ const VigilantPage = () => {
   const toggleReferences = (id: number) => {
     setVisibleReferences((prev) => ({
       ...prev,
-      [id]: !prev[id], // Inverte o estado de visibilidade para o ID específico
+      [id]: !prev[id],
     }));
   };
 
@@ -33,24 +34,30 @@ const VigilantPage = () => {
   }, [hostError, hostData, navigate])
 
   useEffect(() => {
-    if (hostData) return
+    if (hostData || urlData) return
     if (ipAddress.ip) {
       const isDomain = isIpOrDomain(ipAddress.ip)
       if (isDomain === 'IP' || isDomain === 'DOMAIN') {
         fetchHost(ipAddress.ip, true)
       }
+      if (isDomain === 'URL') {
+        fetchScanUrl({ url: ipAddress.ip })
+        const domain = tldts.getDomain(ipAddress.ip) || ''
+        fetchHost(domain, true)
+      }
     }
-  }, [hostData])
+  }, [hostData, urlData])
 
 
   const handleFetchHosts = () => {
-    // validateToken()
     const isDomain = isIpOrDomain(ipAddress.ip) // Verifica se o IP é válido
-    if (isDomain === 'IP') {
-      fetchHost(ipAddress.ip, true) // Passa o IP como parâmetro
-    }
-    if (isDomain === 'DOMAIN') {
+    if (isDomain === 'IP' || isDomain === 'DOMAIN') {
       fetchHost(ipAddress.ip, true)
+    }
+    if (isDomain === 'URL') {
+      fetchScanUrl({ url: ipAddress.ip })
+      const domain = tldts.getDomain(ipAddress.ip) || ''
+      fetchHost(domain, true)
     }
   }
 
@@ -72,7 +79,7 @@ const VigilantPage = () => {
             <Form.Control
               style={{ backgroundColor: 'grey' }}
               type="text"
-              placeholder="Enter your IP address or domain here"
+              placeholder="url, domain or ip address to find vulnerabilities"
               value={ipAddress.ip}
               onChange={(e) => setIpAddress({ ip: e.target.value })} // Atualiza o estado
             />
@@ -102,6 +109,25 @@ const VigilantPage = () => {
         </p>
       ) : (
         <div className="host-info">
+          {urlData?.id && (
+            <div className="host-card">
+              <strong>
+                URL extract data
+              </strong>
+              <div className="host-card">
+                {urlData.domain}
+              </div>
+              <div className="host-card">
+                {urlData.category}
+              </div>
+              <div className="host-card">
+                {urlData.emails.join(', ')}
+              </div>
+              <div className="host-card">
+                {urlData.phones.join(', ')}
+              </div>
+            </div>
+          )}
           {hostData?.id && hostData.hostnames.length > 0 && (
             <div className="host-card">
               <strong>Hostnames:</strong> {hostData.hostnames.join(', ')}
@@ -155,6 +181,7 @@ const VigilantPage = () => {
               </ul>
             </div>
           )}
+
         </div>
       )}
       <div>

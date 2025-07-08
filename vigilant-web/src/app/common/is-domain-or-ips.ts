@@ -1,6 +1,6 @@
 export function isIpOrDomain(
   input: string,
-): 'IP' | 'IP_RANGE' | 'DOMAIN' | 'INVALID' {
+): 'IP' | 'IP_RANGE' | 'DOMAIN' | 'INVALID' | 'URL' {
   // Regex para IPs no formato padrão (ex.: 192.168.15.1)
   const ipRegex =
     /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/;
@@ -12,12 +12,16 @@ export function isIpOrDomain(
   // Regex para domínios (ex.: example.com)
   const domainRegex = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)+[a-zA-Z]{2,}$/;
 
+  const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-_]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
+
   if (ipRegex.test(input)) {
     return 'IP';
   } else if (ipRangeRegex.test(input)) {
     return 'IP_RANGE';
   } else if (domainRegex.test(input)) {
     return 'DOMAIN';
+  } else if (urlRegex.test(input)) {
+    return 'URL';
   } else {
     return 'INVALID';
   }
