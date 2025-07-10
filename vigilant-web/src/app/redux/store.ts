@@ -8,8 +8,8 @@ import { userAPI } from '../services/user.service'
 import { messageApi } from '../services/telegram-bots.service'
 import { hostsApi } from '../services/host.service'
 import { scansApi } from '../services/scan-queue.service'
-import { filesAPi } from '../services/files.service'
 import { urlScanAPI } from '../services/url-scan.service'
+import { hostFileManagerAPI } from '../services/host-files-manager.service'
 
 export const store = configureStore({
   reducer: {
@@ -23,8 +23,9 @@ export const store = configureStore({
     [messageApi.reducerPath]: messageApi.reducer,
     [hostsApi.reducerPath]: hostsApi.reducer,
     [scansApi.reducerPath]: scansApi.reducer,
-    [filesAPi.reducerPath]: filesAPi.reducer,
-    [urlScanAPI.reducerPath]: urlScanAPI.reducer
+    [urlScanAPI.reducerPath]: urlScanAPI.reducer,
+    [hostFileManagerAPI.reducerPath]: hostFileManagerAPI.reducer
+
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
     .concat([authAPI.middleware])
@@ -32,8 +33,8 @@ export const store = configureStore({
     .concat([messageApi.middleware])
     .concat([hostsApi.middleware])
     .concat([scansApi.middleware])
-    .concat([filesAPi.middleware])
     .concat([urlScanAPI.middleware])
+    .concat([hostFileManagerAPI.middleware])
 })
 
 export type RootState = ReturnType<typeof store.getState>

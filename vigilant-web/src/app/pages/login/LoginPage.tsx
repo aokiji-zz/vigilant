@@ -28,7 +28,7 @@ const LoginPage = () => {
       console.log('LoginPage:: data:', data)
       localStorage.setItem('user', JSON.stringify(data))
       dispatch(setAuthenticatedUser(data))
-      navigate('/nvigilant')
+      navigate('/import-data-scan')
     } else if (error) {
       console.log(`LoginPage:: Authentication error`, error)
     }

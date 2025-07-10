@@ -3,14 +3,11 @@ import RootNavigation from './app/navigation/RootNavigation'
 import { store } from './app/redux/store'
 import 'react-notifications/lib/notifications.css'
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-import { useAppDispatch, useAppSelector } from './app/redux/hooks'
-import { selectGeneral } from './app/redux/slices/general.slice'
+import { useAppDispatch } from './app/redux/hooks'
 import { useEffect, useState } from 'react'
-import { resetState, selectAuthenticatedUser, setAuthenticatedUser } from './app/redux/slices/auth.slice'
+import { setAuthenticatedUser } from './app/redux/slices/auth.slice'
 import './App.css'
 function App() {
-  const general = useAppSelector(selectGeneral)
-  const { email, access_token } = useAppSelector(selectAuthenticatedUser)
   const dispatch = useAppDispatch()
   const [finsihedInitialize, setFinsihedInitialize] = useState(false)
 
@@ -24,9 +21,6 @@ function App() {
     setFinsihedInitialize(true)
   }, [dispatch])
 
-  const logout = () => {
-    dispatch(resetState())
-  }
 
   return (
     <div className='App'>
