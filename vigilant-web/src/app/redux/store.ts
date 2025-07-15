@@ -10,6 +10,8 @@ import { hostsApi } from '../services/host.service'
 import { scansApi } from '../services/scan-queue.service'
 import { urlScanAPI } from '../services/url-scan.service'
 import { hostFileManagerAPI } from '../services/host-files-manager.service'
+import { vulnerabilitiesAPI } from '../services/vulnerabilities.service'
+import { cpesApi } from '../services/cpes.service'
 
 export const store = configureStore({
   reducer: {
@@ -24,7 +26,9 @@ export const store = configureStore({
     [hostsApi.reducerPath]: hostsApi.reducer,
     [scansApi.reducerPath]: scansApi.reducer,
     [urlScanAPI.reducerPath]: urlScanAPI.reducer,
-    [hostFileManagerAPI.reducerPath]: hostFileManagerAPI.reducer
+    [hostFileManagerAPI.reducerPath]: hostFileManagerAPI.reducer,
+    [vulnerabilitiesAPI.reducerPath]: vulnerabilitiesAPI.reducer,
+    [cpesApi.reducerPath]: cpesApi.reducer,
 
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
@@ -35,6 +39,7 @@ export const store = configureStore({
     .concat([scansApi.middleware])
     .concat([urlScanAPI.middleware])
     .concat([hostFileManagerAPI.middleware])
+    .concat([cpesApi.middleware])
 })
 
 export type RootState = ReturnType<typeof store.getState>
