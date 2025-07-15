@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -141,11 +141,6 @@ const VigilantPage = () => {
           {hostData?.id && hostData?.portNumbers?.length > 0 && (
             <div className="host-card">
               <strong>PORTS:</strong> {hostData.portNumbers.join(', ')}
-            </div>
-          )}
-          {hostData?.id && hostData?.cves?.length > 0 && (
-            <div className="host-card">
-              <strong>CVES:</strong> {hostData.cves.join(', ')}
             </div>
           )}
           {hostData?.id && hostData?.vulnerabilities?.length > 0 && (

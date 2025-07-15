@@ -9,6 +9,8 @@ import { icons } from '../../common/icons/icons'
 import DashboardMaps from './DashboardMap'
 import PieChart from '../../components/charts/PieCharts'
 import { calculateRisk } from '../../common/calculate-risk'
+import CveSelect from '../../components/selects/CveSelect'
+import CpeSelect from '../../components/selects/CpeSelect'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
@@ -93,29 +95,22 @@ const VigilantListPage = () => {
         <div className="filter">
           <h3 style={{ color: 'wheat' }} className="form-title">TARGET LIST</h3>
           <Form style={{ width: '18rem' }}>
-            <Form.Group controlId="ipAddress" style={{ marginBottom: '1rem' }} >
-              <Form.Control
-                style={{ backgroundColor: 'grey' }}
-                type="text"
-                placeholder="by CVE's: CVE-2025-1234"
-                value={query.cves}
-                onChange={(e) => setQuery({ ...query, cves: e.target.value })} // Atualiza o estado
+            <Form.Group controlId="cves" style={{ marginBottom: '1rem' }} >
+              <CveSelect
+                onChange={(val) => setQuery(({ ...query, cves: val }))}
               />
             </Form.Group>
             <Form.Group controlId="cpes" style={{ marginBottom: '1rem' }} >
-              <Form.Control
-                style={{ backgroundColor: 'grey' }}
-                type="text"
-                placeholder="by CPE's"
-                value={query.cpes}
-                onChange={(e) => setQuery({ ...query, cpes: e.target.value })} // Atualiza o estado
+              <CpeSelect
+                onChange={(val) => setQuery(({ ...query, cpes: val }))}
               />
             </Form.Group>
             <Form.Group controlId="ports" style={{ marginBottom: '1rem' }} >
+              <Form.Label style={{ color: 'wheat' }}>Filter by Ports</Form.Label>
               <Form.Control
                 style={{ backgroundColor: 'grey' }}
                 type="text"
-                placeholder="by PORTS: 80,443..."
+                placeholder="example: 80,443..."
                 value={query.ports}
                 onChange={(e) => setQuery({ ...query, ports: e.target.value })} // Atualiza o estado
               />
