@@ -80,7 +80,7 @@ const VigilantListPage = () => {
       })
 
     }
-  }, [pagination, hostManyData])
+  }, [pagination])
 
   return (
     <div className="container-vigilant">
@@ -98,10 +98,12 @@ const VigilantListPage = () => {
             <Form.Group controlId="cves" style={{ marginBottom: '1rem' }} >
               <CveSelect
                 onChange={(val) => setQuery(({ ...query, cves: val }))}
+                value={query.cves}
               />
             </Form.Group>
             <Form.Group controlId="cpes" style={{ marginBottom: '1rem' }} >
               <CpeSelect
+                value={query.cpes}
                 onChange={(val) => setQuery(({ ...query, cpes: val }))}
               />
             </Form.Group>
