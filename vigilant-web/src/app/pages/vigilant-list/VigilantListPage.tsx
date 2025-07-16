@@ -55,32 +55,23 @@ const VigilantListPage = () => {
   }
 
   useEffect(() => {
-    if (hostManyData) {
-      fetchManyHosts({
-        take: String(pagination.take),
-        skip: String(pagination.skip),
-        ports: query.ports,
-        cves: query.cves,
-        cpes: query.cpes
-      })
+    const filters = {
+      ports: query.ports,
+      cves: query.cves,
+      cpes: query.cpes
     }
-    if (!hostManyData) {
-      fetchDashboardCountry({
-        ports: query.ports,
-        cves: query.cves,
-        cpes: query.cpes
-      })
-      fetchDashboardStatus({
-        take: String(pagination.take),
-        skip: String(pagination.skip),
-      })
-      fetchManyHosts({
-        take: String(pagination.take),
-        skip: String(pagination.skip),
-      })
 
-    }
+    fetchDashboardCountry(filters)
+    fetchDashboardStatus({
+      filters
+    })
+    fetchManyHosts({
+      ...filters,
+      take: String(pagination.take),
+      skip: String(pagination.skip)
+    })
   }, [pagination])
+
 
   return (
     <div className="container-vigilant">
@@ -121,20 +112,30 @@ const VigilantListPage = () => {
             <div className="filter-buttons" style={{
               marginTop: '20px',
               display: 'flex',
-              justifyContent: 'space-between'
             }}>
               <Button onClick={handleFetchHosts}
                 disabled={hostManyIsLoading || (!query.cves && !query.cpes && !query.ports)}
               >
                 {hostManyIsLoading ? 'Searching...' : <>Search {icons.find}</>}
               </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setQuery({ cves: '', cpes: '', ports: '' })
+                  setPagination({ skip: 0, take: 20 })
+                }}
+                disabled={hostManyIsLoading || (!query.cves && !query.cpes && !query.ports)}
+              >
+                Clear
+              </Button>
               <div>
                 <Button onClick={handlePrevious} disabled={pagination.skip === 0} style={{ marginRight: '10px' }}>
                   Previous
                 </Button>
-                <Button onClick={handleNext}>
+                <Button onClick={handleNext} disabled={hostManyIsLoading}>
                   Next
                 </Button>
+
               </div>
             </div>
 
