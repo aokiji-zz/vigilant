@@ -17,21 +17,27 @@ export const vulnerabilitiesAPI = createApi({
     },
   }),
   endpoints: (build) => ({
-    findManyVulnerabilities: build.query<Vulnerability[], any>({
+    findManyVulnerabilities: build.query<Vulnerability[], { skip: string, take: string }>({
       query: ({ take, skip }) => {
         const params = new URLSearchParams();
-
         if (take) params.append('take', take);
         if (skip) params.append('skip', skip);
-
-
         return {
           method: 'GET',
           url: `findMany?${params.toString()}`,
         };
       },
     }),
+    findUniqueVulnerability: build.query<Vulnerability, { cve: string }>({
+      query: ({ cve }) => {
+        return {
+          method: 'GET',
+          url: `findUnique?${cve}`,
+        };
+      },
+    }),
+
   }),
 
 })
-export const { useLazyFindManyVulnerabilitiesQuery } = vulnerabilitiesAPI
+export const { useLazyFindManyVulnerabilitiesQuery, useLazyFindUniqueVulnerabilityQuery } = vulnerabilitiesAPI
