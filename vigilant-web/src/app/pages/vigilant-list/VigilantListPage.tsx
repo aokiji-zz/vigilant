@@ -12,12 +12,13 @@ import { calculateRisk } from '../../common/calculate-risk'
 import CveSelect from '../../components/selects/CveSelect'
 import CpeSelect from '../../components/selects/CpeSelect'
 import { HostStatus } from '../../services/model/host.dto'
+import { PaginationDto } from '../../services/model/pagination.dto'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
   const [fetchDashboardCountry, { data: dashboardCountryData }] = useLazyDashboardCountryQuery()
   const [fetchDashboardStatus, { data: dashboardStatusData }] = useLazyDashboardStatusQuery()
-  const [pagination, setPagination] = useState({ skip: 0, take: 20 })
+  const [pagination, setPagination] = useState<PaginationDto>({ skip: 0, take: 20 })
   const [query, setQuery] = useState({
     cves: '',
     cpes: '',

@@ -15,8 +15,8 @@ const CveSelect = ({ onChange, value }: Props) => {
 
   useEffect(() => {
     fetchData({
-      take: String(50000),
-      skip: String(0),
+      take: 50000,
+      skip: 0,
     })
   }, [])
 
