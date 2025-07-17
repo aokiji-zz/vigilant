@@ -16,8 +16,8 @@ const RootNavigation = () => {
     <BrowserRouter>
       <AuthBootstrapper />
       <Routes>
-        <Route path="/" element={<VigilantPage />} />
-        <Route path="/list" element={<VigilantListPage />} />
+        <Route path="/" element={<VigilantListPage />} />
+        <Route path="/find" element={<VigilantPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/import-data-scan" element={<PrivateRoute />}>
           <Route path="/import-data-scan" element={<ImportDataScanPage />} />

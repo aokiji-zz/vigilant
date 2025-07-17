@@ -11,6 +11,7 @@ import PieChart from '../../components/charts/PieCharts'
 import { calculateRisk } from '../../common/calculate-risk'
 import CveSelect from '../../components/selects/CveSelect'
 import CpeSelect from '../../components/selects/CpeSelect'
+import { HostStatus } from '../../services/model/host.dto'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
@@ -23,7 +24,7 @@ const VigilantListPage = () => {
     ports: '',
   })
   const goToHost = (ipAddress: string) => {
-    navigate('/', { state: ipAddress })
+    navigate('/find', { state: ipAddress })
   }
 
   const handleFetchHosts = () => {
@@ -172,9 +173,9 @@ const VigilantListPage = () => {
                 <br />
                 <strong>Status: </strong>
                 <span
-                  className={`status ${host.status === 'UP'
+                  className={`status ${host.status === HostStatus.UP
                     ? 'status-up'
-                    : host.status === 'DOWN'
+                    : host.status === HostStatus.DOWN
                       ? 'status-down'
                       : 'status-pending'
                     }`}

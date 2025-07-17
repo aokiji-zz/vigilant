@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
 import { urlBaseApiProd } from '../common/base-url'
-import { Host } from './model/host'
+import { Host } from './model/host.dto'
 
 export const hostsApi = createApi({
   reducerPath: 'hostsApi',

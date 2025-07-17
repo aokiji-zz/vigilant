@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
 import { urlBaseApiProd } from '../common/base-url'
-import { ExtracrUrlInput, ExtractedUrlResponse } from './model/extract-url'
+import { ExtracrUrlInput, ExtractedUrlResponse } from './model/extract-url.dto'
 
 export const urlScanAPI = createApi({
   reducerPath: 'urlScanAPI',
