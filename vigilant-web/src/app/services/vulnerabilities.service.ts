@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
 import { urlBaseApiProd } from '../common/base-url'
 import { Vulnerability } from './model/vulnerabilities.dto'
+import { PaginationDto } from './model/pagination.dto'
 
 export const vulnerabilitiesAPI = createApi({
   reducerPath: 'vulnerabilitiesAPI',
@@ -17,21 +18,27 @@ export const vulnerabilitiesAPI = createApi({
     },
   }),
   endpoints: (build) => ({
-    findManyVulnerabilities: build.query<Vulnerability[], any>({
+    findManyVulnerabilities: build.query<Vulnerability[], PaginationDto>({
       query: ({ take, skip }) => {
         const params = new URLSearchParams();
-
-        if (take) params.append('take', take);
-        if (skip) params.append('skip', skip);
-
-
+        if (take) params.append('take', take.toString());
+        if (skip) params.append('skip', skip.toString());
         return {
           method: 'GET',
           url: `findMany?${params.toString()}`,
         };
       },
     }),
+    findUniqueVulnerability: build.query<Vulnerability, { cve: string }>({
+      query: ({ cve }) => {
+        return {
+          method: 'GET',
+          url: `findUnique?${cve}`,
+        };
+      },
+    }),
+
   }),
 
 })
-export const { useLazyFindManyVulnerabilitiesQuery } = vulnerabilitiesAPI
+export const { useLazyFindManyVulnerabilitiesQuery, useLazyFindUniqueVulnerabilityQuery } = vulnerabilitiesAPI

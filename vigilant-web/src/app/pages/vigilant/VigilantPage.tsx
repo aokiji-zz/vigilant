@@ -62,7 +62,7 @@ const VigilantPage = () => {
   }
 
   const goToList = () => {
-    navigate('/list')
+    navigate('/')
   }
 
 

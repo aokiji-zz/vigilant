@@ -1,16 +1,25 @@
 // components/FileUpload.tsx
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './FileUpload.css'
 import { Button } from 'react-bootstrap'
 import { useUploadFileMutation } from '../../../services/host-files-manager.service'
+import { useNavigate } from 'react-router-dom'
 // interface ImportDataScanDto {
 //   setSended: React.Dispatch<React.SetStateAction<boolean>>
 //   // sended:true
 // }
 const ImportDataScan = () => {
   const [files, setFiles] = useState<File[]>([])
+  const navigate = useNavigate()
   const [uploadFile, { isLoading, error, data }] = useUploadFileMutation()
+  useEffect(() => {
+    //@ts-ignore
+    if (error?.status === 401) {
+      localStorage.removeItem('user')
+      navigate('/login')
+    }
+  }, [error, navigate])
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {

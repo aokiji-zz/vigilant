@@ -40,6 +40,7 @@ export const store = configureStore({
     .concat([urlScanAPI.middleware])
     .concat([hostFileManagerAPI.middleware])
     .concat([cpesApi.middleware])
+    .concat([vulnerabilitiesAPI.middleware]),
 })
 
 export type RootState = ReturnType<typeof store.getState>
