@@ -186,6 +186,15 @@ const VigilantListPage = () => {
                 <span className={`risk-level risk-${calculateRisk(host).toLowerCase()}`}>
                   {calculateRisk(host)}
                 </span>
+                <br />
+                <strong>Last update: </strong>
+                {new Date(host.updatedAt || '').toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
               </div>
             ))}
           </div>
