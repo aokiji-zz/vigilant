@@ -2,17 +2,17 @@ import { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useNavigate } from 'react-router-dom'
-import { useLazyDashboardCountryQuery, useLazyFindManyHostQuery, useLazyDashboardStatusQuery } from '../../services/host.service'
+import { useLazyDashboardCountryQuery, useLazyDashboardStatusQuery, useLazyFindManyHostQuery } from '../../services/host.service'
 import './VigilantListPage.css'
 import logo from '../assets/nvigilant_logo_cropped.png'
 import { icons } from '../../common/icons/icons'
-import DashboardMaps from './DashboardMap'
-import PieChart from '../../components/charts/PieCharts'
 import { calculateRisk } from '../../common/calculate-risk'
 import CveSelect from '../../components/selects/CveSelect'
 import CpeSelect from '../../components/selects/CpeSelect'
 import { HostStatus } from '../../services/model/host.dto'
 import { PaginationDto } from '../../services/model/pagination.dto'
+import DashboardMaps from './DashboardMap'
+import PieChart from '../../components/charts/PieCharts'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
@@ -62,11 +62,8 @@ const VigilantListPage = () => {
       cves: query.cves,
       cpes: query.cpes
     }
-
     fetchDashboardCountry(filters)
-    fetchDashboardStatus({
-      filters
-    })
+    fetchDashboardStatus(filters)
     fetchManyHosts({
       ...filters,
       take: String(pagination.take),
@@ -146,6 +143,7 @@ const VigilantListPage = () => {
         <div className="map-section">
           <PieChart data={dashboardStatusData || ['Status', "Count"]} />
         </div>
+
       </div>
 
       <div>
