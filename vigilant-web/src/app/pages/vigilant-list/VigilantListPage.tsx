@@ -2,28 +2,30 @@ import { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useNavigate } from 'react-router-dom'
-import { useLazyDashboardCountryQuery, useLazyFindManyHostQuery, useLazyDashboardStatusQuery } from '../../services/host.service'
+import { useLazyDashboardCountryQuery, useLazyDashboardStatusQuery, useLazyFindManyHostQuery } from '../../services/host.service'
 import './VigilantListPage.css'
 import logo from '../assets/nvigilant_logo_cropped.png'
 import { icons } from '../../common/icons/icons'
-import DashboardMaps from './DashboardMap'
-import PieChart from '../../components/charts/PieCharts'
 import { calculateRisk } from '../../common/calculate-risk'
 import CveSelect from '../../components/selects/CveSelect'
 import CpeSelect from '../../components/selects/CpeSelect'
+import { HostStatus } from '../../services/model/host.dto'
+import { PaginationDto } from '../../services/model/pagination.dto'
+import DashboardMaps from './DashboardMap'
+import PieChart from '../../components/charts/PieCharts'
 const VigilantListPage = () => {
   const navigate = useNavigate()
   const [fetchManyHosts, { data: hostManyData, error: hostManyError, isLoading: hostManyIsLoading }] = useLazyFindManyHostQuery()
   const [fetchDashboardCountry, { data: dashboardCountryData }] = useLazyDashboardCountryQuery()
   const [fetchDashboardStatus, { data: dashboardStatusData }] = useLazyDashboardStatusQuery()
-  const [pagination, setPagination] = useState({ skip: 0, take: 20 })
+  const [pagination, setPagination] = useState<PaginationDto>({ skip: 0, take: 20 })
   const [query, setQuery] = useState({
     cves: '',
     cpes: '',
     ports: '',
   })
   const goToHost = (ipAddress: string) => {
-    navigate('/', { state: ipAddress })
+    navigate('/find', { state: ipAddress })
   }
 
   const handleFetchHosts = () => {
@@ -55,32 +57,20 @@ const VigilantListPage = () => {
   }
 
   useEffect(() => {
-    if (hostManyData) {
-      fetchManyHosts({
-        take: String(pagination.take),
-        skip: String(pagination.skip),
-        ports: query.ports,
-        cves: query.cves,
-        cpes: query.cpes
-      })
+    const filters = {
+      ports: query.ports,
+      cves: query.cves,
+      cpes: query.cpes
     }
-    if (!hostManyData) {
-      fetchDashboardCountry({
-        ports: query.ports,
-        cves: query.cves,
-        cpes: query.cpes
-      })
-      fetchDashboardStatus({
-        take: String(pagination.take),
-        skip: String(pagination.skip),
-      })
-      fetchManyHosts({
-        take: String(pagination.take),
-        skip: String(pagination.skip),
-      })
+    fetchDashboardCountry(filters)
+    fetchDashboardStatus(filters)
+    fetchManyHosts({
+      ...filters,
+      take: String(pagination.take),
+      skip: String(pagination.skip)
+    })
+  }, [pagination])
 
-    }
-  }, [pagination, hostManyData])
 
   return (
     <div className="container-vigilant">
@@ -98,10 +88,12 @@ const VigilantListPage = () => {
             <Form.Group controlId="cves" style={{ marginBottom: '1rem' }} >
               <CveSelect
                 onChange={(val) => setQuery(({ ...query, cves: val }))}
+                value={query.cves}
               />
             </Form.Group>
             <Form.Group controlId="cpes" style={{ marginBottom: '1rem' }} >
               <CpeSelect
+                value={query.cpes}
                 onChange={(val) => setQuery(({ ...query, cpes: val }))}
               />
             </Form.Group>
@@ -119,20 +111,30 @@ const VigilantListPage = () => {
             <div className="filter-buttons" style={{
               marginTop: '20px',
               display: 'flex',
-              justifyContent: 'space-between'
             }}>
               <Button onClick={handleFetchHosts}
                 disabled={hostManyIsLoading || (!query.cves && !query.cpes && !query.ports)}
               >
                 {hostManyIsLoading ? 'Searching...' : <>Search {icons.find}</>}
               </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setQuery({ cves: '', cpes: '', ports: '' })
+                  setPagination({ skip: 0, take: 20 })
+                }}
+                disabled={hostManyIsLoading || (!query.cves && !query.cpes && !query.ports)}
+              >
+                Clear
+              </Button>
               <div>
                 <Button onClick={handlePrevious} disabled={pagination.skip === 0} style={{ marginRight: '10px' }}>
                   Previous
                 </Button>
-                <Button onClick={handleNext}>
+                <Button onClick={handleNext} disabled={hostManyIsLoading}>
                   Next
                 </Button>
+
               </div>
             </div>
 
@@ -141,6 +143,7 @@ const VigilantListPage = () => {
         <div className="map-section">
           <PieChart data={dashboardStatusData || ['Status', "Count"]} />
         </div>
+
       </div>
 
       <div>
@@ -169,9 +172,9 @@ const VigilantListPage = () => {
                 <br />
                 <strong>Status: </strong>
                 <span
-                  className={`status ${host.status === 'UP'
+                  className={`status ${host.status === HostStatus.UP
                     ? 'status-up'
-                    : host.status === 'DOWN'
+                    : host.status === HostStatus.DOWN
                       ? 'status-down'
                       : 'status-pending'
                     }`}
@@ -183,6 +186,15 @@ const VigilantListPage = () => {
                 <span className={`risk-level risk-${calculateRisk(host).toLowerCase()}`}>
                   {calculateRisk(host)}
                 </span>
+                <br />
+                <strong>Last update: </strong>
+                {new Date(host.updatedAt || '').toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
               </div>
             ))}
           </div>

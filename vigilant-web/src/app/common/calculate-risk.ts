@@ -1,4 +1,4 @@
-import { Host } from "../services/model/host";
+import { Host } from "../services/model/host.dto";
 const calculateRisk = (host: Host): string => {
   let riskScore = 0;
 

@@ -1,3 +1,15 @@
+export enum HostStatus {
+  UP = 'UP',
+  DOWN = 'DOWN',
+  PENDING = 'PENDING'
+}
+
+enum IpAddressType {
+  IPV4 = 'IPV4',
+  IPV6 = 'IPV6',
+}
+
+
 export interface Host {
   id?: number;
   host?: string;
@@ -10,7 +22,7 @@ export interface Host {
   cpes?: string[];
   cves?: string[];
   portNumbers?: number[];
-  ports?: Port[];
+  ports?: any[];
   vulnerabilities?: Vulnerability[];
   hostnames?: string[];
   status?: HostStatus;
@@ -25,6 +37,7 @@ export interface Host {
 interface Whois {
   country: string
 }
+
 interface Vulnerability {
   id?: number;
   description?: string;
@@ -34,3 +47,4 @@ interface Vulnerability {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
