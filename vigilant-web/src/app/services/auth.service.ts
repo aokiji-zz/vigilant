@@ -10,10 +10,10 @@ export const authAPI = createApi({
   }),
   endpoints: (build) => ({
     login: build.mutation<any, ILoginRequest>({
-      query: ({ email }) => ({
+      query: ({ email, password }) => ({
         url: `login`,
         method: 'POST',
-        body: { email },
+        body: { email, password },
       }),
     }),
   }),

@@ -13,6 +13,7 @@ import { setAuthenticatedUser } from '../../redux/slices/auth.slice'
 import { Card } from 'react-bootstrap'
 import { useLoginMutation } from '../../services/auth.service'
 import { setShowLoader } from '../../redux/slices/general.slice'
+import { icons } from '../../common/icons/icons'
 
 const schema = yup.object().shape({
   email: yup.string().required(),
@@ -38,9 +39,9 @@ const LoginPage = () => {
     dispatch(setShowLoader(isLoading))
   }, [isLoading, dispatch])
 
-  const handleLogin = (formValue: { email: string }) => {
-    const { email } = formValue
-    login({ email })
+  const handleLogin = (formValue: { email: string, password: string }) => {
+    const { email, password } = formValue
+    login({ email, password })
   }
 
   console.log('data', data)
@@ -51,6 +52,7 @@ const LoginPage = () => {
         onSubmit={handleLogin}
         initialValues={{
           email: '',
+          password: ''
         }}
       >
         {({ handleSubmit, handleChange, handleBlur, values, touched, isValid, errors }) => (
@@ -60,17 +62,33 @@ const LoginPage = () => {
               <Form.Group as={Col} md="12" controlId="validationFormikEmail">
                 <Form.Label>Email</Form.Label>
                 <InputGroup hasValidation>
-                  <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+                  <InputGroup.Text id="email">@</InputGroup.Text>
                   <Form.Control
                     type="text"
                     placeholder="Your login address"
-                    aria-describedby="inputGroupPrepend"
+                    aria-describedby="email"
                     name="email"
                     value={values.email}
                     onChange={handleChange}
                     isInvalid={!!errors.email}
                   />
                   <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
+                </InputGroup>
+                <Form.Label>Password</Form.Label>
+                <InputGroup hasValidation>
+                  <InputGroup.Text id="password">
+                    {icons.lock}
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="password"
+                    placeholder=""
+                    aria-describedby="password"
+                    name="password"
+                    value={values.password}
+                    onChange={handleChange}
+                    isInvalid={!!errors.password}
+                  />
+                  <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                 </InputGroup>
               </Form.Group>
               <Button type="submit">Login</Button>
