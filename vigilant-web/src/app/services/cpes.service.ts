@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../redux/store'
 import { urlBaseApiProd } from '../common/base-url'
-import { Cpe } from './model/cpes.dto'
+import { CpeWithTotal } from './model/cpes.dto'
 import { PaginationDto } from './model/pagination.dto'
 
 export const cpesApi = createApi({
@@ -18,12 +18,13 @@ export const cpesApi = createApi({
     },
   }),
   endpoints: (build) => ({
-    findManyCpes: build.query<Cpe[], PaginationDto>({
-      query: ({ take, skip }) => {
+    findManyCpes: build.query<CpeWithTotal, PaginationDto>({
+      query: ({ take, skip, name }) => {
         const params = new URLSearchParams();
 
         if (take) params.append('take', take.toString());
         if (skip) params.append('skip', skip.toString());
+        if (name) params.append('name', name.toString());
 
 
         return {

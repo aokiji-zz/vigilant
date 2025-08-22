@@ -87,14 +87,14 @@ const VigilantListPage = () => {
           <Form style={{ width: '18rem' }}>
             <Form.Group controlId="cves" style={{ marginBottom: '1rem' }} >
               <CveSelect
-                onChange={(val) => setQuery(({ ...query, cves: val }))}
+                onChange={(val) => setQuery(({ ...query, cves: val || '' }))}
                 value={query.cves}
               />
             </Form.Group>
             <Form.Group controlId="cpes" style={{ marginBottom: '1rem' }} >
               <CpeSelect
                 value={query.cpes}
-                onChange={(val) => setQuery(({ ...query, cpes: val }))}
+                onChange={(val) => setQuery(({ ...query, cpes: val || '' }))}
               />
             </Form.Group>
             <Form.Group controlId="ports" style={{ marginBottom: '1rem' }} >

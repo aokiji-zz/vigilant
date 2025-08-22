@@ -1,25 +1,39 @@
-// src/components/CveSelect.tsx
-import { useEffect } from 'react'
-import Form from 'react-bootstrap/Form'
-import { useLazyFindManyCpesQuery } from '../../services/cpes.service'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { icons } from '../../common/icons/icons'
+import { AsyncPaginate } from "react-select-async-paginate";
+import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { icons } from '../../common/icons/icons';
+import { useLazyFindManyCpesQuery } from '../../services/cpes.service';
 
 interface Props {
-  onChange: (value: string) => void
+  onChange: (value: string | null) => void
   value?: string
-
 }
 
 const CpeSelect = ({ onChange, value }: Props) => {
-  const [fetchData, { data, isLoading, isError }] = useLazyFindManyCpesQuery()
+  const [fetchData] = useLazyFindManyCpesQuery()
 
-  useEffect(() => {
-    fetchData({
-      take: 50000,
-      skip: 0,
-    })
-  }, [])
+  const loadOptions = async (
+    inputValue: string,
+    loadedOptions: any[],
+    { page }: any
+  ) => {
+    const { items, total } = await fetchData({
+      take: 20,
+      skip: page * 20,
+      name: inputValue,
+    }).unwrap()
+
+    return {
+      options: items.map((item) => ({
+        value: item.name,
+        label: item.name,
+      })),
+      hasMore: (page + 1) * 20 < total,
+      additional: {
+        page: page + 1,
+      },
+    }
+  }
+
 
   const renderTooltip = (props: any) => (
     <Tooltip id="cpe-tooltip" {...props}>
@@ -32,7 +46,7 @@ const CpeSelect = ({ onChange, value }: Props) => {
 
 
   return (
-    <>
+    <div>
       <Form.Label style={{ color: 'wheat' }}>
         Filter by CPEs
         <OverlayTrigger placement="right" delay={{ show: 200, hide: 100 }} overlay={renderTooltip}>
@@ -41,20 +55,16 @@ const CpeSelect = ({ onChange, value }: Props) => {
           </span>
         </OverlayTrigger>
       </Form.Label>
-      <Form.Select
-        value={value || ''}
-        style={{ backgroundColor: 'grey' }}
-        disabled={isLoading || isError}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        <option value="">None CPE selected</option>
-        {data?.map((item) => (
-          <option key={item.name} value={item?.name || ''}>
-            {item.name}
-          </option>
-        ))}
-      </Form.Select>
-    </>
+      <AsyncPaginate
+        value={value ? { value, label: value } : null}
+        loadOptions={loadOptions as any}
+        onChange={(selected: any) => onChange(selected?.value || null)}
+        placeholder="Search by CPEs..."
+        additional={{ page: 0 }}
+        debounceTimeout={400}
+        isClearable
+      />
+    </div>
   )
 }
 

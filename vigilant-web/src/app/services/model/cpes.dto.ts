@@ -4,3 +4,8 @@ export interface Cpe {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface CpeWithTotal {
+  items: Cpe[]
+  total: number
+}

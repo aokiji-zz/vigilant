@@ -11,3 +11,7 @@ export interface Vulnerability {
   rankingEpss: string | null
   kev: boolean | null
 }
+export interface VulnerabilityWithTotal {
+  items: Vulnerability[]
+  total: number
+}
